@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudPulse — Cloud Messaging API & AI Chatbot Platform</title>
+    <style>
+        :root {
+            --bg-color: #0b1020;
+            --surface-color: #151c30;
+            --surface-hover: #1e2942;
+            --text-color: #e8ecf5;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius: 14px;
+            --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 clamp(16px, 5vw, 32px);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: rgba(11, 16, 32, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 24px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-color);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.18s ease, opacity 0.18s ease;
+            cursor: pointer;
+            border: none;
+            min-height: 44px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--surface-hover);
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .hero {
+            padding: clamp(40px, 8vw, 96px) 0;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 7vw, 60px);
+            line-height: 1.15;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(16px, 2.5vw, 19px);
+            color: var(--text-muted);
+            max-width: 640px;
+            margin: 0 auto 36px auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 320px;
+            margin: 0 auto 48px auto;
+        }
+
+        .preview-box {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        pre {
+            background: #070a14;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .features {
+            padding: 80px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto 56px auto;
+            font-size: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            transition: transform 0.18s ease, border-color 0.18s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (min-width: 720px) {
+            .nav-links {
+                display: flex;
+            }
+            .hero-actions {
+                flex-direction: row;
+                max-width: none;
+                justify-content: center;
+            }
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                CloudPulse
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#api">API Docs</a>
+                <a href="login.html">Sign In</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline" style="padding: 8px 16px;">Log In</a>
+                <a href="register.html" class="btn btn-primary" style="padding: 8px 16px;">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="badge">
+                    <span class="dot"></span> Next-Gen Cloud Messaging Engine
+                </div>
+                <h1>Power Your Business with <span>Messaging API</span> & AI Chatbots</h1>
+                <p>Connect your devices instantly, automate customer conversations, and build scalable automated messaging infrastructure with our robust Node.js cloud API.</p>
+                <div class="hero-actions">
+                    <a href="register.html" class="btn btn-primary">Start Free Trial</a>
+                    <a href="login.html" class="btn btn-outline">Access Dashboard</a>
+                </div>
+
+                <div class="preview-box">
+                    <div class="preview-header">
+                        <span class="dot"></span>
+                        <span>Node.js API Quickstart</span>
+                    </div>
+                    <pre><code>const response = await fetch('https://api.cloudpulse.cloud/v1/messages/send', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer cp_live_9841029384',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ phone: '+1234567890', message: 'Hello from CloudPulse API!' })
+});
+const data = await response.json();
+console.log(data);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Engineered for Developers & Businesses</h2>
+                <p class="section-desc">Everything you need to manage automated communication and scalable messaging channels from one central hub.</p>
+                
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Instant Connection</h3>
+                        <p>Link your messaging sessions instantly via QR code scanning or secure session keys with high reliability.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🤖</div>
+                        <h3>AI Chatbot Integration</h3>
+                        <p>Seamlessly connect OpenAI, Claude or custom LLM endpoints to incoming messages for 24/7 intelligent automated replies.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🛡️</div>
+                        <h3>Robust User Management</h3>
+                        <p>Multi-tenant device controls, API key generation, webhooks, and secure token rotation out of the box.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 CloudPulse Inc. All rights reserved. Secure Cloud Messaging Infrastructure.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
